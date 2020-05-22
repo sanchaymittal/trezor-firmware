@@ -185,3 +185,13 @@ message DebugLinkEraseSdCard {
     optional bool format = 1;  // if true, the card will be formatted to FAT32.
                                // if false, it will be all 0xFF bytes.
 }
+
+
+/**
+ * Request: Start or stop tracking layout changes
+ * @start
+ */
+message DebugLinkWatchLayout {
+    optional bool watch = 1;  // if true, start watching layout.
+                              // if false, stop.
+}

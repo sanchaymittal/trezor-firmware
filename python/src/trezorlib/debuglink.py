@@ -87,6 +87,17 @@ class DebugLink:
         obj = self._call(messages.DebugLinkGetState(wait_layout=True))
         return layout_lines(obj.layout_lines)
 
+    def watch_layout(self, watch: bool) -> None:
+        """Enable or disable watching layouts.
+        If disabled, wait_layout will not work.
+
+        The message is missing on T1.
+        """
+        self._call(messages.DebugLinkWatchLayout(watch=watch), nowait=True)
+        # Force a scheduling pause on TT - should make sure WatchLayout is in effect
+        # for the next call from the host.
+        self.state()
+
     def encode_pin(self, pin, matrix=None):
         """Transform correct PIN according to the displayed matrix."""
         if matrix is None:
