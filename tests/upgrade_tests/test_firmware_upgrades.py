@@ -191,6 +191,7 @@ def test_upgrade_shamir_recovery(gen, tag):
         assert device_id == emu.client.features.device_id
         assert emu.client.features.recovery_mode
         debug = emu.client.debug
+        debug.watch_layout(True)
 
         # second share
         layout = recovery.enter_share(debug, MNEMONIC_SLIP39_BASIC_20_3of6[2])

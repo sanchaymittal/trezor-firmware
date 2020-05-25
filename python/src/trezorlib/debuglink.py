@@ -373,6 +373,8 @@ class TrezorClientDebugLink(TrezorClient):
             self.expected_responses = None
             self.current_response = None
             self.ui.clear()
+            if self.features.model != "1":
+                self.debug.watch_layout(False)
 
         return False
 

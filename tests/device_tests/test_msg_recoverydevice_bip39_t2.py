@@ -63,6 +63,7 @@ def test_tt_pin_passphrase(client):
         client.debug.press_yes()
 
     with client:
+        client.debug.watch_layout(True)
         client.set_input_flow(input_flow)
         device.recover(
             client, pin_protection=True, passphrase_protection=True, label="hello"
@@ -108,6 +109,7 @@ def test_tt_nopin_nopassphrase(client):
         client.debug.press_yes()
 
     with client:
+        client.debug.watch_layout(True)
         client.set_input_flow(input_flow)
         device.recover(
             client, pin_protection=False, passphrase_protection=False, label="hello"
