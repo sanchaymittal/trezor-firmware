@@ -400,6 +400,12 @@ void config_init(void) {
   storage_init(&protectPinUiCallback, HW_ENTROPY_DATA, HW_ENTROPY_LEN);
   memzero(HW_ENTROPY_DATA, sizeof(HW_ENTROPY_DATA));
 
+  // imported xprv is not supported anymore so we set initialized to false
+  // if no mnemonic is present
+  if (config_isInitialized() && !config_hasMnemonic()) {
+    config_set_bool(KEY_INITIALIZED, false);
+  }
+
   // Auto-unlock storage if no PIN is set.
   if (storage_is_unlocked() == secfalse && storage_has_pin() == secfalse) {
     storage_unlock(PIN_EMPTY, NULL);
@@ -713,6 +719,8 @@ bool config_getMnemonicBytes(uint8_t *dest, uint16_t dest_size,
 bool config_getMnemonic(char *dest, uint16_t dest_size) {
   return sectrue == config_get_string(KEY_MNEMONIC, dest, dest_size);
 }
+
+bool config_hasMnemonic(void) { return sectrue == storage_has(KEY_MNEMONIC); }
 
 /* Check whether mnemonic matches storage. The mnemonic must be
  * a null-terminated string.

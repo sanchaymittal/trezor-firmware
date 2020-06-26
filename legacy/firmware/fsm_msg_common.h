@@ -48,8 +48,8 @@ bool get_features(Features *resp) {
   resp->has_initialized = true;
   resp->initialized = config_isInitialized();
   resp->has_imported = config_getImported(&(resp->imported));
-  resp->has_pin_cached = true;
-  resp->pin_cached = session_isUnlocked() && config_hasPin();
+  resp->has_unlocked = true;
+  resp->unlocked = session_isUnlocked();
   resp->has_needs_backup = true;
   config_getNeedsBackup(&(resp->needs_backup));
   resp->has_unfinished_backup = true;
@@ -345,13 +345,17 @@ void fsm_msgCancel(const Cancel *msg) {
   fsm_sendFailure(FailureType_Failure_ActionCancelled, NULL);
 }
 
-void fsm_msgClearSession(const ClearSession *msg) {
+void fsm_msgLockDevice(const LockDevice *msg) {
   (void)msg;
-  // we do not actually clear the session, we just lock it
-  // TODO: the message should be called LockSession see #819
   config_lockDevice();
   layoutScreensaver();
   fsm_sendSuccess(_("Session cleared"));
+}
+
+void fsm_msgEndSession(const EndSession *msg) {
+  (void)msg;
+  // TODO
+  fsm_sendFailure(FailureType_Failure_FirmwareError, "Not implemented");
 }
 
 void fsm_msgApplySettings(const ApplySettings *msg) {

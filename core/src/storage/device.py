@@ -14,7 +14,7 @@ _NAMESPACE = common.APP_DEVICE
 
 # fmt: off
 # Keys:
-_DEVICE_ID                 = const(0x00)  # bytes
+DEVICE_ID                  = const(0x00)  # bytes
 _VERSION                   = const(0x01)  # int
 _MNEMONIC_SECRET           = const(0x02)  # bytes
 _LANGUAGE                  = const(0x03)  # str
@@ -33,11 +33,16 @@ _ROTATION                  = const(0x0F)  # int
 _SLIP39_IDENTIFIER         = const(0x10)  # bool
 _SLIP39_ITERATION_EXPONENT = const(0x11)  # int
 _SD_SALT_AUTH_KEY          = const(0x12)  # bytes
+INITIALIZED                = const(0x13)  # bool (0x01 or empty)
 
 _DEFAULT_BACKUP_TYPE       = BackupType.Bip39
 # fmt: on
 
 HOMESCREEN_MAXSIZE = 16384
+AUTOLOCK_DELAY_MINIMUM = 10 * 1000  # 10 seconds
+AUTOLOCK_DELAY_DEFAULT = 10 * 60 * 1000  # 10 minutes
+# autolock intervals larger than AUTOLOCK_DELAY_MAXIMUM cause issues in the scheduler
+AUTOLOCK_DELAY_MAXIMUM = 0x2000_0000  # ~6 days
 
 # Length of SD salt auth tag.
 # Other SD-salt-related constants are in sd_salt.py
@@ -56,15 +61,19 @@ def set_version(version: bytes) -> None:
     common.set(_NAMESPACE, _VERSION, version)
 
 
+def is_initialized() -> bool:
+    return common.get_bool(_NAMESPACE, INITIALIZED, public=True)
+
+
 def _new_device_id() -> str:
     return hexlify(random.bytes(12)).decode().upper()
 
 
 def get_device_id() -> str:
-    dev_id = common.get(_NAMESPACE, _DEVICE_ID, True)  # public
+    dev_id = common.get(_NAMESPACE, DEVICE_ID, public=True)
     if not dev_id:
         dev_id = _new_device_id().encode()
-        common.set(_NAMESPACE, _DEVICE_ID, dev_id, True)  # public
+        common.set(_NAMESPACE, DEVICE_ID, dev_id, public=True)
     return dev_id.decode()
 
 
@@ -119,6 +128,7 @@ def store_mnemonic_secret(
     common.set(_NAMESPACE, _MNEMONIC_SECRET, secret)
     common.set_uint8(_NAMESPACE, _BACKUP_TYPE, backup_type)
     common.set_true_or_delete(_NAMESPACE, _NO_BACKUP, no_backup)
+    common.set_bool(_NAMESPACE, INITIALIZED, True, public=True)
     if not no_backup:
         common.set_true_or_delete(_NAMESPACE, _NEEDS_BACKUP, needs_backup)
 
@@ -159,6 +169,7 @@ def load_settings(
     homescreen: bytes = None,
     passphrase_always_on_device: bool = None,
     display_rotation: int = None,
+    autolock_delay_ms: int = None,
 ) -> None:
     if use_passphrase is False:
         passphrase_always_on_device = False
@@ -185,6 +196,8 @@ def load_settings(
             common.set(
                 _NAMESPACE, _ROTATION, display_rotation.to_bytes(2, "big"), True
             )  # public
+    if autolock_delay_ms is not None:
+        set_autolock_delay_ms(autolock_delay_ms)
 
 
 def get_flags() -> int:
@@ -209,14 +222,14 @@ def set_flags(flags: int) -> None:
 def get_autolock_delay_ms() -> int:
     b = common.get(_NAMESPACE, _AUTOLOCK_DELAY_MS)
     if b is None:
-        return 10 * 60 * 1000
+        return AUTOLOCK_DELAY_DEFAULT
     else:
         return int.from_bytes(b, "big")
 
 
 def set_autolock_delay_ms(delay_ms: int) -> None:
-    if delay_ms < 60 * 1000:
-        delay_ms = 60 * 1000
+    delay_ms = max(delay_ms, AUTOLOCK_DELAY_MINIMUM)
+    delay_ms = min(delay_ms, AUTOLOCK_DELAY_MAXIMUM)
     common.set(_NAMESPACE, _AUTOLOCK_DELAY_MS, delay_ms.to_bytes(4, "big"))
 
 

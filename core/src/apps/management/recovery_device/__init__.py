@@ -9,9 +9,9 @@ from trezor.ui.text import Text
 
 from apps.common.confirm import require_confirm
 from apps.common.request_pin import (
+    error_pin_invalid,
     request_pin_and_sd_salt,
     request_pin_confirm,
-    show_pin_invalid,
 )
 from apps.management.recovery_device.homescreen import (
     recovery_homescreen,
@@ -42,12 +42,15 @@ async def recovery_device(ctx: wire.Context, msg: RecoveryDevice) -> Success:
 
     await _continue_dialog(ctx, msg)
 
+    if not msg.dry_run:
+        # wipe storage to make sure the device is in a clear state
+        storage.reset()
+
     # for dry run pin needs to be entered
     if msg.dry_run:
         curpin, salt = await request_pin_and_sd_salt(ctx, "Enter PIN")
         if not config.check_pin(pin_to_int(curpin), salt):
-            await show_pin_invalid(ctx)
-            raise wire.PinInvalid("PIN invalid")
+            await error_pin_invalid(ctx)
 
     if not msg.dry_run:
         # set up pin if requested
@@ -64,14 +67,14 @@ async def recovery_device(ctx: wire.Context, msg: RecoveryDevice) -> Success:
     storage.recovery.set_in_progress(True)
     storage.recovery.set_dry_run(bool(msg.dry_run))
 
-    workflow.replace_default(recovery_homescreen)
+    workflow.set_default(recovery_homescreen)
     return await recovery_process(ctx)
 
 
 def _validate(msg: RecoveryDevice) -> None:
-    if not msg.dry_run and storage.is_initialized():
+    if not msg.dry_run and storage.device.is_initialized():
         raise wire.UnexpectedMessage("Already initialized")
-    if msg.dry_run and not storage.is_initialized():
+    if msg.dry_run and not storage.device.is_initialized():
         raise wire.NotInitialized("Device is not initialized")
 
     if msg.enforce_wordlist is False:

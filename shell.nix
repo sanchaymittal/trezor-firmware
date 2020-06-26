@@ -1,4 +1,5 @@
-with import <nixpkgs> {};
+# nixos-unstable from 2020-06-02
+with import (builtins.fetchTarball https://github.com/NixOS/nixpkgs/archive/467ce5a9f45aaf96110b41eb863a56866e1c2c3c.tar.gz) {};
 
 stdenv.mkDerivation {
   name = "trezor-firmware-dev";
@@ -9,6 +10,7 @@ stdenv.mkDerivation {
     check
     clang-tools
     gcc
+    gcc-arm-embedded
     git
     gnumake
     graphviz
@@ -21,8 +23,6 @@ stdenv.mkDerivation {
     protobuf3_6
     valgrind
     zlib
-  ] ++ stdenv.lib.optionals (!stdenv.isDarwin) [
-    gcc-arm-embedded
   ] ++ stdenv.lib.optionals (stdenv.isDarwin) [
     darwin.apple_sdk.frameworks.CoreAudio
     darwin.apple_sdk.frameworks.AudioToolbox

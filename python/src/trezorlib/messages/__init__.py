@@ -34,7 +34,6 @@ from .ChangePin import ChangePin
 from .ChangeWipeCode import ChangeWipeCode
 from .CipherKeyValue import CipherKeyValue
 from .CipheredKeyValue import CipheredKeyValue
-from .ClearSession import ClearSession
 from .CosiCommit import CosiCommit
 from .CosiCommitment import CosiCommitment
 from .CosiSign import CosiSign
@@ -54,11 +53,13 @@ from .DebugLinkShowText import DebugLinkShowText
 from .DebugLinkShowTextItem import DebugLinkShowTextItem
 from .DebugLinkState import DebugLinkState
 from .DebugLinkStop import DebugLinkStop
+from .DebugLinkWatchLayout import DebugLinkWatchLayout
 from .DebugMoneroDiagAck import DebugMoneroDiagAck
 from .DebugMoneroDiagRequest import DebugMoneroDiagRequest
 from .Deprecated_PassphraseStateAck import Deprecated_PassphraseStateAck
 from .Deprecated_PassphraseStateRequest import Deprecated_PassphraseStateRequest
 from .ECDHSessionKey import ECDHSessionKey
+from .EndSession import EndSession
 from .Entropy import Entropy
 from .EntropyAck import EntropyAck
 from .EntropyRequest import EntropyRequest
@@ -130,6 +131,7 @@ from .LiskTransactionAsset import LiskTransactionAsset
 from .LiskTransactionCommon import LiskTransactionCommon
 from .LiskVerifyMessage import LiskVerifyMessage
 from .LoadDevice import LoadDevice
+from .LockDevice import LockDevice
 from .MessageSignature import MessageSignature
 from .MoneroAccountPublicAddress import MoneroAccountPublicAddress
 from .MoneroAddress import MoneroAddress

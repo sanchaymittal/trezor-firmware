@@ -4,7 +4,7 @@ from trezor.ui import display
 from trezor.ui.button import Button, ButtonClear, ButtonMono, ButtonMonoConfirm
 
 if False:
-    from typing import Optional
+    from typing import Optional, Tuple
     from trezor.ui.button import ButtonContent, ButtonStyleStateType
 
 
@@ -191,7 +191,7 @@ class Bip39Keyboard(ui.Layout):
 
     async def handle_input(self) -> None:
         touch = loop.wait(io.TOUCH)
-        timeout = loop.sleep(1000 * 1000 * 1)
+        timeout = loop.sleep(1000)
         race_touch = loop.race(touch)
         race_timeout = loop.race(touch, timeout)
 
@@ -207,3 +207,10 @@ class Bip39Keyboard(ui.Layout):
                 self.dispatch(event, x, y)
             else:
                 self.on_timeout()
+
+    if __debug__:
+
+        def create_tasks(self) -> Tuple[loop.Task, ...]:
+            from apps.debug import input_signal
+
+            return super().create_tasks() + (input_signal(),)
