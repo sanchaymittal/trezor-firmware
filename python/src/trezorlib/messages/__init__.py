@@ -111,6 +111,8 @@ from .GetECDHSessionKey import GetECDHSessionKey
 from .GetEntropy import GetEntropy
 from .GetFeatures import GetFeatures
 from .GetNextU2FCounter import GetNextU2FCounter
+from .GetOwnershipId import GetOwnershipId
+from .GetOwnershipProof import GetOwnershipProof
 from .GetPublicKey import GetPublicKey
 from .HDNodePathType import HDNodePathType
 from .HDNodeType import HDNodeType
@@ -199,6 +201,8 @@ from .NEMSignedTx import NEMSignedTx
 from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransfer import NEMTransfer
 from .NextU2FCounter import NextU2FCounter
+from .OwnershipId import OwnershipId
+from .OwnershipProof import OwnershipProof
 from .PassphraseAck import PassphraseAck
 from .PassphraseRequest import PassphraseRequest
 from .PinMatrixAck import PinMatrixAck
