@@ -7,13 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- Set initialized in storage to false if no mnemonic is present.  #965
+- Set initialized in storage to false if no mnemonic is present.  [#965]
+- Support multiple change-outputs.  [#1098]
+
+### Changed
+- `Features.pin_cached` renamed to `unlocked`, and it is now `true` even if PIN is not set.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Re-introduce ability to spend pre-Overwinter UTXO on Zcash-like coins.  [#1030]
 
 ### Security
 
@@ -199,3 +204,7 @@ Version 1.1.0 [Jun 2014]
 Version 1.0.0 [Apr 2014]
 * Added support for streaming of transactions into the device
 * Removed all current limits on size of signed transaction
+
+[#965]: https://github.com/trezor/trezor-firmware/issues/965
+[#1030]: https://github.com/trezor/trezor-firmware/issues/1030
+[#1098]: https://github.com/trezor/trezor-firmware/issues/1098
